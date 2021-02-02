@@ -1,0 +1,247 @@
+Screen:
+    ScreenManager:
+        id:scr_mngr
+        MainMenuScreen:
+            name:"menu"
+        InputScreen:
+            name:"input"
+        RestingHeartRateScreen:
+            name:"heartrate"
+        ResultScreen:
+            name:"result"
+        LocationSearchScreen:
+            name:"locsearch"
+        LocationResultScreen:
+            name:"locresult"
+        HistoryScreen:
+            name:"history"
+
+
+
+
+<MainMenuScreen>
+    NavigationLayout:
+        ScreenManager:
+            Screen:
+                BoxLayout:
+                    orientation:'vertical'
+                    MDToolbar:
+                        title:'                 MD 24/7'
+                        elevation:10
+                    Widget:
+                    MDBottomAppBar:
+                        MDToolbar:
+                            icon: "account"
+                            type: "bottom"
+                            on_action_button:
+                                root.manager.current='input'
+                                root.manager.transition.direction = "left"
+                            left_action_items:[["history",lambda x: app.history_screen("history")]]
+                            right_action_items:[["google-earth",lambda x: app.location_screen("locsearch")]]
+
+<InputScreen>
+	BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Input Details'
+            elevation:10
+            left_action_items:[["backspace",lambda x:app.back_screen("menu")]]
+
+        Widget:
+        MDTextField:
+            hint_text: "Full name"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: 250
+            helper_text:"Please enter your Registered Name"
+            helper_text_mode:"on_focus"
+        Widget:
+            height: 35
+        MDTextField:
+            hint_text: "Height"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: 250
+            helper_text:"Must be in centimeters"
+            helper_text_mode:"on_focus"
+        Widget:
+            height:35
+        MDTextField:
+            hint_text: "Weight"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: 250
+            helper_text:"Must be in Kilogram"
+            helper_text_mode:"on_focus"
+        Widget:
+            height:35
+        MDTextField:
+            hint_text: "Age"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: 250
+            helper_text:"please enter your age"
+            helper_text_mode:"on_focus"
+        Widget:
+            size_hint_y: None
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Confirm'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : app.show_alert_dialog()
+        Widget:
+            size_hint_x: None
+<RestingHeartRateScreen>
+	BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Heart Rate'
+            elevation:10
+            left_action_items:[["backspace",lambda x:app.back2_screen("input")]]
+            right_action_items:[["head-question",lambda x:app.hakdog()]]
+        Widget:
+        MDLabel:
+            text: "Check your pulse on the inside of your wrist, below your thumb. Gently place 2 fingers of your other hand on this artery.Count the beats for 60 seconds"
+            theme_text_color:'Secondary'
+            font_style:'Subtitle2'
+            pos_hint: {'center_x': 0.5,'center_y':0.8}
+        Widget:
+            size_hint_x: None
+        MDTextFieldRound:
+            hint_text: "Enter your heart rate"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: 250
+            icon_left:"heart"
+            helper_text_mode:"on_focus"
+        Widget:
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Get Result'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='result'
+<ResultScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Result'
+            elevation:10
+            right_action_items:[["head-question",lambda x:app.result_dialog()]]
+        Widget:
+
+        MDLabel:
+            text: "results here"
+        Widget:
+
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Go to Main Menu'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='menu'
+        Widget:
+            size_hint_x: None
+
+<LocationSearchScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Location Services'
+            elevation:10
+            left_action_items:[["backspace",lambda x:app.back3_screen("menu")]]
+        Widget:
+
+        MDTextField:
+            hint_text: "Enter your location"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: 250
+            helper_text:"please enter your exact/current location"
+            helper_text_mode:"on_focus"
+        Widget:
+            size_hint_y: None
+
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Confirm'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='locresult'
+        Widget:
+            size_hint_x: None
+
+<LocationResultScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Result'
+            elevation:10
+            left_action_items:[["backspace",lambda x:app.back4_screen("locsearch")]]
+        Widget:
+            size_hint_y: None
+
+        MDLabel:
+            text: "Hospitals/Clinics Near you"
+        Widget:
+            size_hint_y: None
+
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Go to Main Menu'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='menu'
+        Widget:
+            size_hint_x: None
+
+<HistoryScreen>
+    MDTextField:
+        id: inp
+        hint_text: 'Enter Full Name'
+        size_hint_x: None
+        pos_hint: {"center_x": .4, "center_y": .1}
+        width: 170
+
+    MDCard:
+        size_hint: None, None
+        size: "280dp", "280dp"
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "vertical"
+
+        ScrollView:
+            MDList:
+                id: list
+
+    MDFloatingActionButton:
+        icon: "magnify"
+        md_bg_color: app.theme_cls.primary_color
+        pos_hint: {"center_x": .8, "center_y": .1}
+        user_font_size: "25sp"
+        on_release:
+            root.search()
+
+    MDToolbar:
+        id: toolbar
+        pos_hint: {"top": 1}
+        elevation: 6
+        title: "Check History"
+        left_action_items:[["backspace",lambda x:app.back_screen("menu")]]
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,15 +1,9 @@
 from kivymd.app import MDApp
 from kivy.lang import Builder
-from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ObjectProperty
-from kivymd.theming import ThemableBehavior
-from kivymd.uix.list import MDList
-from kivy.core.window import Window
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
-from kivy.uix.screenmanager import Screen, ScreenManager
-
-Window.size = (300, 500)
+from kivy.uix.screenmanager import Screen
+import sqlite3
 
 
 class DemoApp(MDApp):
@@ -34,41 +28,46 @@ class DemoApp(MDApp):
     class HistoryScreen(Screen):
         pass
 
-    sm = ScreenManager()
-    sm.add_widget(MainMenuScreen(name="menu"))
-    sm.add_widget(InputScreen(name="input"))
-    sm.add_widget(RestingHeartRateScreen(name="heartrate"))
-    sm.add_widget(ResultScreen(name="result"))
-    sm.add_widget(LocationSearchScreen(name="locsearch"))
-    sm.add_widget(LocationResultScreen(name="locresult"))
-    sm.add_widget(HistoryScreen(name="history"))
 
-    class ContentNavigationDrawer(BoxLayout):
-        screen_manager = ObjectProperty()
-        nav_drawer = ObjectProperty()
+    def save_data(self):
+        conn = sqlite3.connect('infouser.db')
+        cur = conn.cursor()
+        cur.execute(""" INSERT INTO infouser (fname,height,weight,age,heartrate) VALUES (?,?,?,?,?)""",
+                    (self.root.ids.scr_mngr.get_screen('input').ids.fname.text,
+                     self.root.ids.scr_mngr.get_screen('input').ids.height.text,
+                     self.root.ids.scr_mngr.get_screen('input').ids.weight.text,
+                     self.root.ids.scr_mngr.get_screen('input').ids.age.text,
+                     self.root.ids.scr_mngr.get_screen('input').ids.heartrate.text))
+        conn.commit()
+        conn.close()
 
-    class DrawerList(ThemableBehavior, MDList):
-        pass
+    # conn = sqlite3.connect('infouser.db')
+    # cur = conn.cursor()
+    # conn.commit()
+    # conn.close()
 
     def build(self):
         self.theme_cls.primary_palette = "Lime"
+        self.theme_cls.theme_style = "Light"  # "Light"
         screen = Builder.load_file("main.kv")
         return screen
 
     def show_alert_dialog(self):
         close_button = MDFlatButton(text="Okay",
-                                    on_press=self.hatdog)
+                                    on_release=self.okay)
         more_button = MDFlatButton(text="Cancel", on_press=self.close_dialog)
+
         self.dialog = MDDialog(title="Confirmation", text="Confirm Details?",
                                size_hint=(0.7, 1),
                                buttons=[close_button, more_button])
         self.dialog.open()
 
     def result_dialog(self):
-        close_button = MDFlatButton(text="Okay", on_release = self.close_dialog)
-        self.dialog = MDDialog(title="Where did we get the Results?", text="Results are Determined based on the Details Given by the User",
+        close_button = MDFlatButton(text="Okay", on_release=self.close_dialog)
+        self.dialog = MDDialog(title="Where did we get the Results?",
+                               text="Results are Determined based on the Details Given by the User",
                                size_hint=(0.7, 1),
-                               buttons = [close_button])
+                               buttons=[close_button])
         self.dialog.open()
 
     def hakdog(self):
@@ -79,16 +78,35 @@ class DemoApp(MDApp):
                                buttons=[close_button])
         self.dialog.open()
 
-    def close_dialog(self, obj):
+    def show_data(self, *args):
+        if self.root.ids.scr_mngr.get_screen('input').ids.fname.text == "" \
+                or self.root.ids.scr_mngr.get_screen('input').ids.height.text == "" \
+                or self.root.ids.scr_mngr.get_screen('input').ids.weight.text == "" \
+                or self.root.ids.scr_mngr.get_screen('input').ids.heartrate.text == "" \
+                or self.root.ids.scr_mngr.get_screen('input').ids.age.text == "":
+            close_button = MDFlatButton(text="Okay", on_release=self.close_dialog)
+            self.dialog = MDDialog(title="Invalid", text="No item added",
+                                   size_hint=(0.7, 1), buttons=[close_button])
+            self.dialog.open()
+        else:
+            self.show_alert_dialog()
+
+    def okay(self, *args):
+        print(self.root.ids.scr_mngr.get_screen('input').ids.fname.text),
+        print(self.root.ids.scr_mngr.get_screen('input').ids.height.text),
+        print(self.root.ids.scr_mngr.get_screen('input').ids.weight.text),
+        print(self.root.ids.scr_mngr.get_screen('input').ids.age.text),
+        print(self.root.ids.scr_mngr.get_screen('input').ids.heartrate.text)
+        self.save_data()
+        self.root.ids.scr_mngr.current = 'result'
         self.dialog.dismiss()
 
-    def hatdog(self, obj):
-        self.root.ids.scr_mngr.current = 'heartrate'
+    def close_dialog(self, obj):
         self.dialog.dismiss()
 
     def history_screen(self, obj):
         self.root.ids.scr_mngr.current = 'history'
-        self.root.ids.scr_mngr.transition.direction = "left"
+        self.root.ids.scr_mngr.transition.direction = "right"
 
     def location_screen(self, obj):
         self.root.ids.scr_mngr.current = 'locsearch'

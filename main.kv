@@ -16,9 +16,6 @@ Screen:
         HistoryScreen:
             name:"history"
 
-
-
-
 <MainMenuScreen>
     NavigationLayout:
         ScreenManager:
@@ -26,7 +23,7 @@ Screen:
                 BoxLayout:
                     orientation:'vertical'
                     MDToolbar:
-                        title:'                 MD 24/7'
+                        title:'                                                                   MD 24/7'
                         elevation:10
                     Widget:
                     MDBottomAppBar:
@@ -40,89 +37,87 @@ Screen:
                             right_action_items:[["google-earth",lambda x: app.location_screen("locsearch")]]
 
 <InputScreen>
+    id:information
 	BoxLayout:
         orientation: 'vertical'
         MDToolbar:
             title:'Input Details'
             elevation:10
             left_action_items:[["backspace",lambda x:app.back_screen("menu")]]
+            right_action_items:[["head-question",lambda x:app.hakdog()]]
 
         Widget:
         MDTextField:
+            id:fname
+            required: True
             hint_text: "Full name"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
-            width: 250
+            width: '250dp'
             helper_text:"Please enter your Registered Name"
             helper_text_mode:"on_focus"
         Widget:
             height: 35
+
         MDTextField:
+            id:height
+            required: True
             hint_text: "Height"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
-            width: 250
-            helper_text:"Must be in centimeters"
+            width: '250dp'
+            helper_text:"Feet / Inches"
             helper_text_mode:"on_focus"
         Widget:
             height:35
+
         MDTextField:
+            id:weight
+            required: True
             hint_text: "Weight"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
-            width: 250
+            width: '250dp'
             helper_text:"Must be in Kilogram"
             helper_text_mode:"on_focus"
         Widget:
             height:35
+
         MDTextField:
+            id:age
             hint_text: "Age"
+            required: True
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
-            width: 250
+            width: '250dp'
             helper_text:"please enter your age"
             helper_text_mode:"on_focus"
         Widget:
+            height: 35
+
+        MDTextField:
+            id:heartrate
+            required: True
+            hint_text: "Heartrate"
+            pos_hint: {'center_x': 0.5}
+            size_hint_x: None
+            width: '250dp'
+            helper_text:"Count the beat on your palm for 60 seconds"
+            helper_text_mode:"on_focus"
+        Widget:
             size_hint_y: None
+
         MDScreen:
             MDRectangleFlatButton:
                 mode: "rectangle"
                 text: 'Confirm'
                 pos_hint: {'center_x':0.5, 'center_y':0.8}
-                on_press : app.show_alert_dialog()
-        Widget:
-            size_hint_x: None
-<RestingHeartRateScreen>
-	BoxLayout:
-        orientation: 'vertical'
-        MDToolbar:
-            title:'Heart Rate'
-            elevation:10
-            left_action_items:[["backspace",lambda x:app.back2_screen("input")]]
-            right_action_items:[["head-question",lambda x:app.hakdog()]]
-        Widget:
-        MDLabel:
-            text: "Check your pulse on the inside of your wrist, below your thumb. Gently place 2 fingers of your other hand on this artery.Count the beats for 60 seconds"
-            theme_text_color:'Secondary'
-            font_style:'Subtitle2'
-            pos_hint: {'center_x': 0.5,'center_y':0.8}
-        Widget:
-            size_hint_x: None
-        MDTextFieldRound:
-            hint_text: "Enter your heart rate"
-            pos_hint: {'center_x': 0.5}
-            size_hint_x: None
-            width: 250
-            icon_left:"heart"
-            helper_text_mode:"on_focus"
-        Widget:
+                on_press :
+                    app.show_data()
 
-        MDScreen:
-            MDRectangleFlatButton:
-                mode: "rectangle"
-                text: 'Get Result'
-                pos_hint: {'center_x':0.5, 'center_y':0.8}
-                on_press : root.manager.current='result'
+        Widget:
+            size_hint_x: None
+
 <ResultScreen>
     BoxLayout:
         orientation: 'vertical'
@@ -135,7 +130,6 @@ Screen:
         MDLabel:
             text: "results here"
         Widget:
-
 
         MDScreen:
             MDRectangleFlatButton:
@@ -159,12 +153,11 @@ Screen:
             hint_text: "Enter your location"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
-            width: 250
+            width: '250dp'
             helper_text:"please enter your exact/current location"
             helper_text_mode:"on_focus"
         Widget:
             size_hint_y: None
-
 
         MDScreen:
             MDRectangleFlatButton:
@@ -190,7 +183,6 @@ Screen:
         Widget:
             size_hint_y: None
 
-
         MDScreen:
             MDRectangleFlatButton:
                 mode: "rectangle"
@@ -201,12 +193,20 @@ Screen:
             size_hint_x: None
 
 <HistoryScreen>
+    MDFloatingActionButton:
+        icon: "magnify"
+        md_bg_color: app.theme_cls.primary_color
+        pos_hint: {"center_x": .8, "center_y": .1}
+        user_font_size: "25sp"
+        on_release:
+            root.search()
+
     MDTextField:
         id: inp
         hint_text: 'Enter Full Name'
         size_hint_x: None
         pos_hint: {"center_x": .4, "center_y": .1}
-        width: 170
+        width: '170dp'
 
     MDCard:
         size_hint: None, None
@@ -218,30 +218,9 @@ Screen:
             MDList:
                 id: list
 
-    MDFloatingActionButton:
-        icon: "magnify"
-        md_bg_color: app.theme_cls.primary_color
-        pos_hint: {"center_x": .8, "center_y": .1}
-        user_font_size: "25sp"
-        on_release:
-            root.search()
-
     MDToolbar:
         id: toolbar
         pos_hint: {"top": 1}
         elevation: 6
         title: "Check History"
         left_action_items:[["backspace",lambda x:app.back_screen("menu")]]
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,8 +3,7 @@ from kivy.lang import Builder
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.uix.screenmanager import Screen
-import sqlite3
-
+import sqlite3 as sql
 
 class DemoApp(MDApp):
     class MainMenuScreen(Screen):
@@ -28,11 +27,23 @@ class DemoApp(MDApp):
     class HistoryScreen(Screen):
         pass
 
+    # conn = sql.connect('infouser.db')
+    # cur = conn.cursor()
+    # cur.execute(""" CREATE TABLE info (
+    #         id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #         fname VARCHAR(50),
+    #         height INT,
+    #         weight INT,
+    #         age INT,
+    #         heartrate INT)
+    #         """)
+    # conn.commit()
+    # conn.close()
 
     def save_data(self):
-        conn = sqlite3.connect('infouser.db')
+        conn = sql.connect('infouser.db')
         cur = conn.cursor()
-        cur.execute(""" INSERT INTO infouser (fname,height,weight,age,heartrate) VALUES (?,?,?,?,?)""",
+        cur.execute(""" INSERT INTO info (fname,height,weight,age,heartrate) VALUES (?,?,?,?,?)""",
                     (self.root.ids.scr_mngr.get_screen('input').ids.fname.text,
                      self.root.ids.scr_mngr.get_screen('input').ids.height.text,
                      self.root.ids.scr_mngr.get_screen('input').ids.weight.text,
@@ -40,11 +51,6 @@ class DemoApp(MDApp):
                      self.root.ids.scr_mngr.get_screen('input').ids.heartrate.text))
         conn.commit()
         conn.close()
-
-    # conn = sqlite3.connect('infouser.db')
-    # cur = conn.cursor()
-    # conn.commit()
-    # conn.close()
 
     def build(self):
         self.theme_cls.primary_palette = "Lime"
@@ -83,7 +89,8 @@ class DemoApp(MDApp):
                 or self.root.ids.scr_mngr.get_screen('input').ids.height.text == "" \
                 or self.root.ids.scr_mngr.get_screen('input').ids.weight.text == "" \
                 or self.root.ids.scr_mngr.get_screen('input').ids.heartrate.text == "" \
-                or self.root.ids.scr_mngr.get_screen('input').ids.age.text == "":
+                or self.root.ids.scr_mngr.get_screen('input').ids.age.text == "" \
+                or self.root.ids.scr_mngr.get_screen('input').ids.heartrate.text == "":
             close_button = MDFlatButton(text="Okay", on_release=self.close_dialog)
             self.dialog = MDDialog(title="Invalid", text="No item added",
                                    size_hint=(0.7, 1), buttons=[close_button])

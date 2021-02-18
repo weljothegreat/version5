@@ -7,8 +7,14 @@ Screen:
             name:"input"
         RestingHeartRateScreen:
             name:"heartrate"
-        ResultScreen:
-            name:"result"
+        ResultObeseScreen:
+            name:"obese"
+        ResultUnderweightScreen:
+            name:"underweight"
+        ResultOverweightScreen:
+            name:"overweight"
+        ResultNormalScreen:
+            name:"normal"
         LocationSearchScreen:
             name:"locsearch"
         LocationResultScreen:
@@ -17,26 +23,36 @@ Screen:
             name:"history"
 
 <MainMenuScreen>
-    NavigationLayout:
+    MDNavigationLayout:
         ScreenManager:
             Screen:
                 BoxLayout:
                     orientation:'vertical'
+                    screen: app.news()
+
                     MDToolbar:
                         title:'                                                                   MD 24/7'
                         elevation:10
                     Widget:
+
+                    MDLabel:
+
+
                     MDBottomAppBar:
                         MDToolbar:
                             icon: "account"
                             type: "bottom"
                             on_action_button:
                                 root.manager.current='input'
-                                root.manager.transition.direction = "left"
+                                root.manager.transition.direction = "right"
                             left_action_items:[["history",lambda x: app.history_screen("history")]]
                             right_action_items:[["google-earth",lambda x: app.location_screen("locsearch")]]
+                MDFloatLayout:
+
+
 
 <InputScreen>
+    on_pre_enter: app.clear_inputs()
     id:information
 	BoxLayout:
         orientation: 'vertical'
@@ -51,11 +67,12 @@ Screen:
             id:fname
             required: True
             hint_text: "Full name"
+            icon_right:"account"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
             width: '250dp'
             helper_text:"Please enter your Registered Name"
-            helper_text_mode:"on_focus"
+            helper_text_mode:"persistent"
         Widget:
             height: 35
 
@@ -63,11 +80,12 @@ Screen:
             id:height
             required: True
             hint_text: "Height"
+            icon_right:"human-male-height"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
             width: '250dp'
-            helper_text:"Feet / Inches"
-            helper_text_mode:"on_focus"
+            helper_text:"Must be in centimeters"
+            helper_text_mode:"persistent"
         Widget:
             height:35
 
@@ -75,11 +93,12 @@ Screen:
             id:weight
             required: True
             hint_text: "Weight"
+            icon_right:"weight-kilogram"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
             width: '250dp'
             helper_text:"Must be in Kilogram"
-            helper_text_mode:"on_focus"
+            helper_text_mode:"persistent"
         Widget:
             height:35
 
@@ -87,11 +106,12 @@ Screen:
             id:age
             hint_text: "Age"
             required: True
+            icon_right:"cake"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
             width: '250dp'
             helper_text:"please enter your age"
-            helper_text_mode:"on_focus"
+            helper_text_mode:"persistent"
         Widget:
             height: 35
 
@@ -99,11 +119,12 @@ Screen:
             id:heartrate
             required: True
             hint_text: "Heartrate"
+            icon_right:"heart-pulse"
             pos_hint: {'center_x': 0.5}
             size_hint_x: None
             width: '250dp'
             helper_text:"Count the beat on your palm for 60 seconds"
-            helper_text_mode:"on_focus"
+            helper_text_mode:"persistent"
         Widget:
             size_hint_y: None
 
@@ -118,17 +139,19 @@ Screen:
         Widget:
             size_hint_x: None
 
-<ResultScreen>
+<ResultObeseScreen>
     BoxLayout:
         orientation: 'vertical'
         MDToolbar:
-            title:'Result'
+            title:'Result: OBESE'
             elevation:10
             right_action_items:[["head-question",lambda x:app.result_dialog()]]
         Widget:
 
         MDLabel:
-            text: "results here"
+            text: "     People with obesity have increased risk of cardiovascular disease,type 2 diabetes, high blood pressure, and other health conditions. Waist-to-hip ratio, waist-to-height ratio, and body fat percentage measurements can provide a more complete picture of any health risks. A person should consult with their healthcare provider and consider making lifestyle changes through healthy eating and fitness to improve their health indicators. \n TIPS: \n *Change your diet. \n *Consider adding physical activity \n *Medication \n *Consume less “bad” fat and more “good” fat. \n *Consume less processed and sugary foods. \n *Eat more servings of vegetables and fruits \n *Eat plenty of dietary fiber. \n *limit your vices (drinking,smoking,etc)"
+            halign: "left"
+
         Widget:
 
         MDScreen:
@@ -137,60 +160,104 @@ Screen:
                 text: 'Go to Main Menu'
                 pos_hint: {'center_x':0.5, 'center_y':0.8}
                 on_press : root.manager.current='menu'
+
+<ResultNormalScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Result: NORMAL WEIGHT'
+            elevation:10
+            right_action_items:[["head-question",lambda x:app.result_dialog()]]
         Widget:
-            size_hint_x: None
+
+        MDLabel:
+            text :"     Maintaining a healthy weight may lower the risk of developing certain health conditions, including cardiovascular disease and type 2 diabetes. Waist-to-hip ratio, waist-to-height ratio, and body fat percentage measurements can provide a more complete picture of any health risks. \n TIPS: \n *Limit what you eat \n *exercise \n *sleep 7-8 hours a day \n *maintain a consistent sleeping routine \n *consider eating more healthy foods \n *limit your vices (drinking,smoking,etc)"
+            halign: "left"
+
+        Widget:
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Go to Main Menu'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='menu'
+
+<ResultOverweightScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Result: OVERWEIGHT'
+            elevation:10
+            right_action_items:[["head-question",lambda x:app.result_dialog()]]
+        Widget:
+
+        MDLabel:
+            text: "     Being overweight may increase the risk of certain health conditions, including cardiovascular disease, high blood pressure, and type 2 diabetes. Waist-to-hip ratio, waist-to-height ratio, and body fat percentage measurements can provide a more complete picture of any health risks. A person should consult with their healthcare provider and consider making lifestyle changes through healthy eating and fitness to improve their health indicators.Being overweight or fat is having more body fat than is optimally healthy \n TIPS: \n *Eat a high protein breakfast. \n *Avoid sugary drinks and fruit juice \n *Drink water before meals. \n *Choose weight-loss-friendly foods. \n *Eat soluble fiber. \n *Drink coffee or tea. \n *Base your diet on whole foods. \n *Eat slowly. \n *limit your vices (drinking,smoking,etc)"
+            halign: "left"
+
+        Widget:
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Go to Main Menu'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='menu'
+
+<ResultUnderweightScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title:'Result: UNDERWEIGHT'
+            elevation:10
+            right_action_items:[["head-question",lambda x:app.result_dialog()]]
+        Widget:
+
+        MDLabel:
+            text: "     Being underweight may pose certain health risks, including nutrient deficiencies and hormonal changes. Waist-to-hip ratio, waist-to-height ratio, and body fat percentage measurements can provide a more complete picture of any health risks. A person should consult with their healthcare provider and consider making lifestyle changes through healthy eating and fitness to improve their health indicators.Being underweight can cause health problems. An underweight person is a person whose body weight is considered too low to be healthy /n TIPS: /n *eat more frequently /n *choose nutrient-rich foods /n *watch what you eat and drink /n *exercise /n *limit your vices (drinking,smoking,etc)"
+            halign: "left"
+
+        Widget:
+
+        MDScreen:
+            MDRectangleFlatButton:
+                mode: "rectangle"
+                text: 'Go to Main Menu'
+                pos_hint: {'center_x':0.5, 'center_y':0.8}
+                on_press : root.manager.current='menu'
 
 <LocationSearchScreen>
     BoxLayout:
         orientation: 'vertical'
         MDToolbar:
-            title:'Location Services'
+            title:'Hospital Searcher'
             elevation:10
-            left_action_items:[["backspace",lambda x:app.back3_screen("menu")]]
-        Widget:
+            left_action_items:[["backspace",lambda x:app.back_screen6("menu")]]
+            right_action_items:[["head-question",lambda x:app.info1_dialog()]]
 
-        MDTextField:
-            hint_text: "Enter your location"
-            pos_hint: {'center_x': 0.5}
-            size_hint_x: None
-            width: '250dp'
-            helper_text:"please enter your exact/current location"
-            helper_text_mode:"on_focus"
-        Widget:
-            size_hint_y: None
+        ScrollView:
+            MDList:
+                id: rlist
+<RecordLine>:
+    adaptive_height: True
+    OneLineListItem:
+        text: root.text
+        on_release: app.showinfo(root.parent.parent.panel_cls.text, self.text)
 
-        MDScreen:
-            MDRectangleFlatButton:
-                mode: "rectangle"
-                text: 'Confirm'
-                pos_hint: {'center_x':0.5, 'center_y':0.8}
-                on_press : root.manager.current='locresult'
-        Widget:
-            size_hint_x: None
+<InformationDialog>:
+    title: "Details:"
 
-<LocationResultScreen>
-    BoxLayout:
-        orientation: 'vertical'
-        MDToolbar:
-            title:'Result'
-            elevation:10
-            left_action_items:[["backspace",lambda x:app.back4_screen("locsearch")]]
-        Widget:
-            size_hint_y: None
-
-        MDLabel:
-            text: "Hospitals/Clinics Near you"
-        Widget:
-            size_hint_y: None
-
-        MDScreen:
-            MDRectangleFlatButton:
-                mode: "rectangle"
-                text: 'Go to Main Menu'
-                pos_hint: {'center_x':0.5, 'center_y':0.8}
-                on_press : root.manager.current='menu'
-        Widget:
-            size_hint_x: None
+<OneLineAvatarIconListItem>:    # The list widget
+    id: icnlst
+    IconLeftWidget:
+        icon: "clipboard"
+    RightCheckbox:
+        id: cb
+    Container:
+        MDIconButton:
+            icon:'close-circle-outline'
+            on_release: app.remove_one_item(root.text)
 
 <HistoryScreen>
     MDFloatingActionButton:
@@ -199,7 +266,7 @@ Screen:
         pos_hint: {"center_x": .8, "center_y": .1}
         user_font_size: "25sp"
         on_release:
-            root.search()
+            app.show_database()
 
     MDTextField:
         id: inp

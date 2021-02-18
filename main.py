@@ -7,14 +7,12 @@ from kivymd.uix.list import IRightBodyTouch, MDList
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.properties import StringProperty
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
-from newsapi import NewsApiClient
 import json
 import sqlite3 as sql
 import datetime
 import time
 import requests
 
-newsapi = NewsApiClient(api_key='0a2a06f5a843426ca8384f89111bfe99')
 
 
 class Content(MDList):

@@ -26,17 +26,18 @@ Screen:
     MDNavigationLayout:
         ScreenManager:
             Screen:
-                BoxLayout:
+                MDBoxLayout:
                     orientation:'vertical'
-                    screen: app.news()
-
                     MDToolbar:
-                        title:'                                                                   MD 24/7'
+                        title:'MD 24/7'
                         elevation:10
-                    Widget:
 
-                    MDLabel:
 
+                    BoxLayout:
+                        NewsLayout:
+                            id: nl  # and in id to access the instance
+                            pos_hint:{'center_y':0.3}
+                            orientation:'vertical'
 
                     MDBottomAppBar:
                         MDToolbar:
@@ -47,9 +48,22 @@ Screen:
                                 root.manager.transition.direction = "right"
                             left_action_items:[["history",lambda x: app.history_screen("history")]]
                             right_action_items:[["google-earth",lambda x: app.location_screen("locsearch")]]
-                MDFloatLayout:
 
-
+<NewsLayout>:
+    orientation: 'vertical'
+    orientation: 'vertical'
+    Label:
+        text: root.title
+        text_size: self.size
+        halign: 'center'
+        color : 0,0,0,1
+    AsyncImage:
+        source: root.picture
+    Label:
+        text_size: self.size
+        halign: 'center'
+        text: root.description
+        color: 0,0,0,1
 
 <InputScreen>
     on_pre_enter: app.clear_inputs()

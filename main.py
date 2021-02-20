@@ -1,18 +1,27 @@
-from kivymd.app import MDApp
-from kivy.lang import Builder
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.button import MDFlatButton
-from kivy.uix.screenmanager import Screen
-from kivymd.uix.list import IRightBodyTouch, MDList
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivy.properties import StringProperty
-from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
+import datetime
 import json
 import sqlite3 as sql
-import datetime
 import time
-import requests
 
+from kivy.clock import Clock
+from kivy.lang import Builder
+from kivy.properties import StringProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
+from kivymd.app import MDApp
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelTwoLine
+from kivymd.uix.list import IRightBodyTouch, MDList
+
+from news import News
+
+
+class NewsLayout(BoxLayout):
+    title = StringProperty()
+    picture = StringProperty(allownone=True)
+    description = StringProperty(allownone=True)
 
 
 class Content(MDList):
@@ -27,58 +36,71 @@ class InformationDialog(MDDialog):
     pass
 
 
+class MainMenuScreen(Screen):
+    pass
+
+
+class InputScreen(Screen):
+    pass
+
+
+class RestingHeartRateScreen(Screen):
+    pass
+
+
+class ResultObeseScreen(Screen):
+    pass
+
+
+class ResultNormalScreen(Screen):
+    pass
+
+
+class ResultOverweightScreen(Screen):
+    pass
+
+
+class ResultUnderweightScreen(Screen):
+    pass
+
+
+class LocationSearchScreen(Screen):
+    pass
+
+
+class LocationResultScreen(Screen):
+    pass
+
+
+class HistoryScreen(Screen):
+    pass
+
+
 class DemoApp(MDApp):
-    class MainMenuScreen(Screen):
-        pass
 
-    class InputScreen(Screen):
-        pass
-
-    class RestingHeartRateScreen(Screen):
-        pass
-
-    class ResultObeseScreen(Screen):
-        pass
-
-    class ResultNormalScreen(Screen):
-        pass
-
-    class ResultOverweightScreen(Screen):
-        pass
-
-    class ResultUnderweightScreen(Screen):
-        pass
-
-    class LocationSearchScreen(Screen):
-        pass
-
-    class LocationResultScreen(Screen):
-        pass
-
-    class HistoryScreen(Screen):
-        pass
-
-    # conn = sql.connect('USERINFO.db')
-    # cur = conn.cursor()
-    # cur.execute(""" CREATE TABLE IF NOT EXISTS results (
-    #             UID INTEGER PRIMARY KEY AUTOINCREMENT,
-    #             NAME VARCHAR(50),
-    #             RESULT INT,
-    #             DATE_TIME TEXT DEFAULT CURRENT_TIMESTAMP)
-    #          """)
-    # cur.execute(""" CREATE TABLE IF NOT EXISTS information (
-    #              id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #              fname  VARCHAR(50),
-    #              height INT,
-    #              weight INT,
-    #              age INT,
-    #              heartrate INT)
-    #              """)
-    # conn.commit()
-    # conn.close()
+    conn = sql.connect('USERINFO.db')
+    cur = conn.cursor()
+    cur.execute(""" CREATE TABLE IF NOT EXISTS results (
+                UID INTEGER PRIMARY KEY AUTOINCREMENT,
+                RESULT INT,
+                DATE_TIME TEXT DEFAULT CURRENT_TIMESTAMP)
+             """)
+    cur.execute(""" CREATE TABLE IF NOT EXISTS information (
+                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 fname  VARCHAR(50),
+                 height INT,
+                 weight INT,
+                 age INT,
+                 heartrate INT)
+                 """)
+    conn.commit()
+    conn.close()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.news = News()  # create the Class instance
+        self.news.get_news()  # pull a list of stories from the web
+        self.i = 0  # index for moving through the
         self.list_items = []  # Dictionary where the items is stored
         self.counter = 0
         self.counting = {'Item counter': self.counter}
@@ -200,6 +222,7 @@ class DemoApp(MDApp):
               ]}]
 
     def on_start(self):
+        Clock.schedule_interval(self.update_news, 5)  # every 5 seconds, show the next story
         for category in self.card_file:
             panel = MDExpansionPanel(icon="scr2.png", content=Content(),
                                      panel_cls=MDExpansionPanelTwoLine(text=category['Category'],
@@ -209,6 +232,7 @@ class DemoApp(MDApp):
                 rw = RecordLine(text=rec['title'])
                 print(rec['title'])
                 self.root.ids.scr_mngr.get_screen('locsearch').ids.rlist.children[0].content.add_widget(rw)
+
 
     def showinfo(self, cat, r):
         close_button = MDFlatButton(text="Done", on_release=self.close_dialog)
@@ -237,6 +261,22 @@ class DemoApp(MDApp):
     class Container(IRightBodyTouch, MDBoxLayout):  # This line position widget to the right.
         adaptive_width = True
 
+    def update_news(self, dt):
+        # this is moving through the list of stories pulled, it does not go back to the web for more content
+        # to get refresed content call self.news.get_news()
+        # Skip stories that don't have a picture and a description
+        if not self.news.headlines[self.i][1] or not self.news.headlines[self.i][2]:
+            self.i = (self.i + 1) % len(self.news.headlines)
+            self.update_news(None)  # junk parameter...
+        else:
+            p = self.root.ids.scr_mngr.get_screen('menu').ids.nl  # a sort cut to avoid writing self.root.ids.dl 3x
+            p.title = self.news.headlines[self.i][0]  # The title
+            p.picture = self.news.headlines[self.i][1]  # url to the picture
+            p.description = self.news.headlines[self.i][2]
+            self.i = (self.i + 1) % len(self.news.headlines)
+            bl = BoxLayout()
+            self.root.ids.scr_mngr.get_screen('menu').ids.nl.add_widget(bl)
+
     def save_data(self):
         conn = sql.connect('USERINFO.db')
         cur = conn.cursor()
@@ -249,23 +289,23 @@ class DemoApp(MDApp):
         conn.commit()
         conn.close()
 
-    def news(self):
-        url = ('http://newsapi.org/v2/top-headlines?'
-               'country=ph&category=health&'
-               'apiKey=0a2a06f5a843426ca8384f89111bfe99')
-        response = requests.get(url)
-        print(response.json())
-        news_json = json.loads(response.text)
-
-        count = 4
-
-        for news in news_json['articles']:
-            if count > 0:
-                print(str(news['title']), '\n')
-                print(str(news['description']), "\n")
-                print(str(news['url']), "\n")
-                print(str(news['urlToImage']), "\n")
-                count -= 1
+    # def news(self):
+    #    url = ('http://newsapi.org/v2/top-headlines?'
+    #           'country=ph&category=health&'
+    #           'apiKey=0a2a06f5a843426ca8384f89111bfe99')
+    #    response = requests.get(url)
+    #    print(response.json())
+    #    news_json = json.loads(response.text)
+    #
+    #    count = 4
+    #
+    #    for news in news_json['articles']:
+    #        if count > 0:
+    #            print(str(news['title']), '\n')
+    #            print(str(news['description']), "\n")
+    #            print(str(news['url']), "\n")
+    #            print(str(news['urlToImage']), "\n")
+    #            count -= 1
 
     def result_condition(self):
         n = int(10000)
@@ -281,9 +321,8 @@ class DemoApp(MDApp):
 
         conn = sql.connect('USERINFO.db')
         cur = conn.cursor()
-        cur.execute(""" INSERT INTO results (NAME,RESULT,DATE_TIME) VALUES (?,?,?)""",
+        cur.execute(""" INSERT INTO results (RESULT,DATE_TIME) VALUES (?,?)""",
                     (
-                        self.root.ids.scr_mngr.get_screen('input').ids.fname.text,
                         answer,
                         date
                     ))
@@ -326,8 +365,8 @@ class DemoApp(MDApp):
             print(data)
 
     def build(self):
-        self.theme_cls.primary_palette = "Lime"
-        self.theme_cls.theme_style = "Light"  # "Light"
+        self.theme_cls.primary_palette = "Yellow"
+        self.theme_cls.theme_style = "Light"
         screen = Builder.load_file("main.kv")
         return screen
 
